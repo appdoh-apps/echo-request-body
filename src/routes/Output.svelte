@@ -6,6 +6,7 @@
     let lastRequestTime = new Date();
     let sessionId;
     let hostname = '';
+    let activeSessions = 0;
 
     function pollServer() {
         fetch(`${hostname}fetch`, {
@@ -16,11 +17,11 @@
         })
             .then(response => response.json())
             .then(resp => {
-                const {data} = resp;
+                const {data, sessions} = resp;
+                activeSessions = sessions
                 if (data.length > 0) {
                     data.map(it => {
                         cacheItems.unshift(it)
-                        console.log('cacheItem:', cacheItems);
                         cacheItems = cacheItems;
 
                     });
@@ -46,7 +47,7 @@
 
 <div>
     <p>
-        Simply send your REST request to: {hostname}
+        Simply send POST requests to: <b>{hostname}</b>.
     </p>
 
     <p>
@@ -54,7 +55,11 @@
     </p>
 
     <p>
-        Data polled since {lastRequestTime.toLocaleString()}.
+        Data polled since <b>{lastRequestTime.toLocaleString()}</b>.
+    </p>
+
+    <p>
+        There are <b>{activeSessions}</b> active sessions.
     </p>
 
     {#each cacheItems as item (item)}
